@@ -1,0 +1,125 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+.app-dash{
+  text-align: center;
+  font-family : "Inter", sans-serif;
+}
+.headerC-dash{
+  padding : none;
+}
+.secondsection-dash{
+  padding : 41px;
+  max-width : 380px;
+  max-height : 490px;
+  background-color : #232D7F;
+  border-radius : 20px;
+  margin-left : 80px;
+  margin-top : 50px;
+}
+.card-main{
+    display : flex;
+    flex-direction : row;
+}
+
+@media (max-width : 1024px){
+    .headerC-dash{
+        padding : none;
+    }
+  .app-dash{
+  text-align: center;
+  font-family : "Inter", sans-serif;
+  }
+.secondsection-dash{
+  padding : 30px;
+  max-width : 330px;
+  text-align : left;
+  background-color : #232D7F;
+  border-radius : 20px;
+  margin-left : 20px;
+  margin-top : 20px;
+}
+.firstsection-dash{
+    margin-left : 20px;
+    margin-top : 20px;
+}
+
+
+  .maincards-dash .stat-value{
+    font-size : 25px;
+  }
+
+}
+
+
+@media ( max-width : 890px){
+    .card-main{
+    display : flex;
+    flex-direction : column;
+    align-items : center;
+}
+    .headerC-dash{
+        padding : none;
+    }
+  .app-dash{
+  text-align: center;
+  font-family : "Inter", sans-serif;
+  }
+.secondsection-dash{
+  padding : 30px;
+  max-width : 330px;
+  text-align : left;
+  background-color : #232D7F;
+  border-radius : 20px;
+  margin-left : 0px;
+  margin-top : 20px;
+}
+.secondsection-dash button{
+    max-width : 300px;
+}
+
+.firstsection-dash{
+    margin-right : 17px;
+}
+
+  .maincard-custom {
+    min-width: 320px;
+  }
+}
+
+@media ( max-width : 320px){
+    .card-main{
+    display : flex;
+    flex-direction : column;
+    align-items : center;
+}
+    .headerC-dash{
+        padding : none;
+    }
+  .app-dash{
+  text-align: center;
+  font-family : "Inter", sans-serif;
+  }
+.secondsection-dash{
+  padding : 30px;
+  max-width : 290px;
+  text-align : left;
+  background-color : #232D7F;
+  border-radius : 20px;
+  margin-left : 0px;
+  margin-top : 20px;
+}
+.secondsection-dash button{
+    max-width : 250px;
+}
+
+.firstsection-dash{
+    margin-right : 17px;
+}
+}
+
+@media (min-width: 1024px) {
+  .maincard-custom {
+    min-width: 820px;
+  }
+}

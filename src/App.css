@@ -1,0 +1,166 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+.app{
+  text-align: center;
+  font-family : "Inter", sans-serif;
+}
+.headerC{
+  padding : 15px;
+}
+.main1{
+  color : #DEDEDF;
+  font-size : 3.113rem;
+  font-weight : 600;
+}
+.qrcode {
+  color : #9D93E6;
+  font-size : 3.113rem;
+  font-weight : 600;
+}
+.main2{
+  color : #DEDEDF;
+  font-size : 1.25rem;
+  font-weight : 200;
+}
+
+.cardholder{
+  padding : 50px;
+}
+.mainsection{
+  display : flex;
+  flex-direction : row;
+  align-items: center;      
+  justify-content: center;  
+}
+.firstsection{
+  padding-right : 30px;
+  padding-left : 30px;
+  padding-top : 50px;
+  padding-bottom : 60px;
+  max-width : 380px;
+  text-align : left;
+  background-color : #232D7F;
+  border-radius : 20px;
+  margin-right : 50px;
+}
+.secondsection{
+  padding : 41px;
+  max-width : 380px;
+  max-height : 490px;
+  background-color : #232D7F;
+  border-radius : 20px;
+  margin-left : 50px;
+}
+
+@media ( max-width : 890px){
+  .cardholder{
+    padding-top : 10px;
+    padding-right : 10px;
+    padding-left : 10px;
+  }
+  .app{
+  text-align: center;
+  font-family : "Inter", sans-serif;
+  }
+  .mainsection {
+  display : flex;
+  flex-direction : column;
+  align-items: center;      
+  justify-content: center; 
+  }
+  .firstsection{
+  padding : 30px;
+  max-width : 330px;
+  text-align : left;
+  background-color : #232D7F;
+  border-radius : 20px;
+  margin-right : 0px;
+  margin-botton : 20px;
+}
+  .secondsection{
+  padding : 30px;
+  max-width : 330px;
+  text-align : left;
+  background-color : #232D7F;
+  border-radius : 20px;
+  margin-left : 0px;
+  margin-top : 20px;
+}
+
+.firstsection button{
+  max-width : 280px;
+}
+
+.custom-analytics-btn{
+  max-width : 219px;
+}
+
+}
+
+@media (max-width: 768px) {
+  .main1 {
+      font-size: 2.2rem;
+  }
+  .qrcode {
+    font-size: 2.2rem;
+  }
+  
+  .main2 {
+      font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .main1 {
+      font-size: 1.6rem;
+  }
+
+  .qrcode {
+    font-size: 1.6rem;
+  }
+  
+  .main2 {
+      font-size: 1rem;
+  }
+}
+
+@media ( max-width : 890px){
+  .app{
+  text-align: center;
+  font-family : "Inter", sans-serif;
+  }
+  .mainsection {
+  display : flex;
+  flex-direction : column;
+  align-items: center;      
+  justify-content: center; 
+  }
+  .firstsection{
+  padding : 30px;
+  max-width : 290px;
+  text-align : left;
+  background-color : #232D7F;
+  border-radius : 20px;
+  margin-right : 0px;
+  margin-botton : 20px;
+}
+  .secondsection{
+  padding : 30px;
+  max-width : 290px;
+  text-align : left;
+  background-color : #232D7F;
+  border-radius : 20px;
+  margin-left : 0px;
+  margin-top : 20px;
+}
+
+.firstsection button{
+  max-width : 210px;
+}
+
+.secondsection button{
+  max-width : 210px;
+}
+
+}
