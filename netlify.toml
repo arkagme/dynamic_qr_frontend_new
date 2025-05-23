@@ -1,20 +1,18 @@
 [[redirects]]
+  from = "/oauth2/redirect/google"  # Explicit path first
+  to = "https://qr.arkagme.biz/oauth2/redirect/google"
+  status = 200
+  force = true
+  headers = {X-Forwarded-Proto = "https"}
+
+[[redirects]]
   from = "/api/*"
   to = "https://qr.arkagme.biz/:splat"
   status = 200
   force = true
-  # Add explicit header handling
-  headers = {X-Forwarded-Proto = "https", X-Forwarded-For = ":remote_addr"}
+  headers = {X-Forwarded-Proto = "https"}
 
-[[redirects]]
-  from = "/oauth2/redirect/google"
-  to = "https://qr.arkagme.biz/oauth2/redirect/google"
-  status = 200
-  force = true
-
-[[redirects]]
+[[redirects]]  # Client-side routing LAST
   from = "/*"
   to = "/"
   status = 200
-  # Lower priority by adding conditions
-  conditions = {Language = ["en"]}
