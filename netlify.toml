@@ -1,19 +1,19 @@
 [[redirects]]
-  from = "/api/qr/login/federated/google"
-  to = "https://qr.arkagme.biz/api/qr/login/federated/google"
+  from = "/api/qr/login/*"
+  to = "https://qr.arkagme.biz/api/qr/login/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/qr/*"
+  to = "https://qr.arkagme.biz/api/qr/:splat"
   status = 200
   force = true
   headers = {X-Forwarded-Proto = "https"}
 
-[[redirects]]
-  from = "/api/*"
-  to = "https://qr.arkagme.biz/:splat"
-  status = 200
-  force = true
 
 [[redirects]]
   from = "/*"
   to = "/"
   status = 200
-  # Explicitly exclude API paths from client-side routing
   conditions = {Pathname = ["!^/api/*", "!^/oauth2/*"]}
