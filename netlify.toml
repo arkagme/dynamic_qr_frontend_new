@@ -1,0 +1,5 @@
+# netlify.toml
+[[redirects]]
+  from = "/oauth2/redirect/*"
+  to = "/"
+  status = 200
