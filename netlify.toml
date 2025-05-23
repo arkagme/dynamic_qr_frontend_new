@@ -1,5 +1,5 @@
 [[redirects]]
-  from = "/oauth2/redirect/google"  # Explicit path first
+  from = "/oauth2/redirect/google"
   to = "https://qr.arkagme.biz/oauth2/redirect/google"
   status = 200
   force = true
@@ -10,9 +10,10 @@
   to = "https://qr.arkagme.biz/:splat"
   status = 200
   force = true
-  headers = {X-Forwarded-Proto = "https"}
 
-[[redirects]]  # Client-side routing LAST
+[[redirects]]
   from = "/*"
   to = "/"
   status = 200
+  # Explicitly exclude API paths from client-side routing
+  conditions = {Pathname = ["!^/api/*", "!^/oauth2/*"]}
