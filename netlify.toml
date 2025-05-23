@@ -1,5 +1,5 @@
 [[redirects]]
-  from = "/ogin/federated/google"
+  from = "/login/federated/google"
   to = "https://qr.arkagme.biz/login/federated/google"
   status = 200
   force = true
