@@ -1,5 +1,11 @@
-# netlify.toml
 [[redirects]]
-  from = "/oauth2/redirect/*"
-  to = "/"
+  from = "/api/*"
+  to = "https://qr.arkagme.biz/:splat"  # Proxy API requests to backend
   status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/"
+  status = 200  # Handle client-side routing
+
