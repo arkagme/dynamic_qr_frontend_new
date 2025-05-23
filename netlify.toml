@@ -1,6 +1,6 @@
 [[redirects]]
-  from = "/login/federated/google"
-  to = "https://qr.arkagme.biz/login/federated/google"
+  from = "/api/qr/login/federated/google"
+  to = "https://qr.arkagme.biz/api/qr/login/federated/google"
   status = 200
   force = true
   headers = {X-Forwarded-Proto = "https"}
