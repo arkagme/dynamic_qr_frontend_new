@@ -7,7 +7,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const History = () =>{
     const [history, setHistory] = useState([]);
-    const [user, setUser] = useState([]);
+    const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
