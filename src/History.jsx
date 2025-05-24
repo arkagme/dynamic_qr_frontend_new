@@ -7,7 +7,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const History = () =>{
     const [history, setHistory] = useState([]);
-    const [user, setUser] = useState(null);
+    const [userset, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -31,16 +31,18 @@ const History = () =>{
         setIsLoading(false);
     };
 
+    useEffect ( () => {
     const fetchUser = async () => {
         try {
             const response = await axios.get(`${API_BASE_URL}/me`, { withCredentials: true });
             setUser(response.data);
-            console.log(response.data)
+            console.log(response.data);
         } catch (error) {
             console.error('Error fetching history:', error);
-            setUser([]);
+            setUser(null);
         }
     };
+    fetchUser(); })
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this QR code?")) return;
@@ -73,10 +75,6 @@ const History = () =>{
 
     useEffect(() => {
         fetchHistory();
-    }, []);
-
-    useEffect(() => {
-        fetchUser();
     }, []);
 
 
@@ -118,7 +116,7 @@ const History = () =>{
             </div>
             <div className="headerC-dash">
                 <a className="main1-dash">History</a>
-                <h1 className="main2-dash">Welcome {user.user.name} Check the previous QR codes you have created</h1>
+                <h1 className="main2-dash">Welcome {userset.user.name} Check the previous QR codes you have created</h1>
             </div>
             <div className='dashboard'>
             <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 mt-10 mx-4 lg:mx-10 xl:mx-20" 
