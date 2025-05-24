@@ -240,7 +240,10 @@ const QRGenerator = () =>  {
           <ul
             tabIndex={0}
             className="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-3 w-80 h-35 p-2 shadow shadow flex flex-col items-center text-center">
-            <li><a href='/history' className='text-lg '>History</a></li>
+            <li><a>
+            <Link to="/history" onClick={handleHistoryClick} className="text-lg">
+              History
+            </Link></a></li>
             <li><a href='/about'className='text-lg '>About</a></li>
             <li><button type="button" onClick={handleLogout} className="btn btn-outline btn-error btn-sm w-24 mx-auto mt-2"
                     style={{ minWidth: '90px', fontSize: '0.95rem', padding: '0.55rem 0.6rem' }}>Logout</button></li>

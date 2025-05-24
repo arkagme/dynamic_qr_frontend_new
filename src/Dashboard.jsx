@@ -112,7 +112,7 @@ const Dashboard = () => {
                     </div>
                     <ul
                         tabIndex={0}
-                        className="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-3 w-80 h-35 p-2 shadow shadow flex flex-col items-center text-center">
+                        className="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-3 w-80 h-45 p-2 shadow shadow flex flex-col items-center text-center">
                         <li><a href="/" className='text-lg '>Home</a></li>
                         <li><a href='/history' className='text-lg '>History</a></li>
                         <li><a href='/about' className='text-lg '>About</a></li>
