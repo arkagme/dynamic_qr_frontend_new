@@ -118,7 +118,7 @@ const History = () =>{
             </div>
             <div className="headerC-dash">
                 <a className="main1-dash">History</a>
-                <h1 className="main2-dash">Welcome {user.name} Check the previous QR codes you have created</h1>
+                <h1 className="main2-dash">Welcome {user.user.name} Check the previous QR codes you have created</h1>
             </div>
             <div className='dashboard'>
             <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 mt-10 mx-4 lg:mx-10 xl:mx-20" 
