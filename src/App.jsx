@@ -1,7 +1,7 @@
 import './App.css'
 import React, { useState, useRef , useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { Link } from 'react-router-dom';
+import { Link , useNavigate} from 'react-router-dom';
 import axios from 'axios';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -16,6 +16,7 @@ const QRGenerator = () =>  {
   const [qrRendered, setQrRendered] = useState(false);
   const [displayQrValue, setDisplayQrValue] = useState('https://example.com');
   const [isGenerated, setIsGenerated] = useState(false);
+  const navigate = useNavigate();
 
 
   const handleLogin = () => {
@@ -189,6 +190,25 @@ const QRGenerator = () =>  {
     }
   };
 
+  const checkAuth = async () => {
+  try {
+    await axios.get(`${API_BASE_URL}/me`, { withCredentials: true });
+    return true;
+  } catch (error) {
+    alert('Please log in to access history.');
+    return false;
+    }
+  };
+
+  const handleHistoryClick = async (e) => {
+  e.preventDefault();
+  const isAuthenticated = await checkAuth();
+  if (isAuthenticated) {
+    navigate('/history');
+  }
+};
+
+
 
   return (
     <>
@@ -199,7 +219,11 @@ const QRGenerator = () =>  {
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
-          <li><a href='/history'className='text-lg '>History</a></li>
+          <li><a>
+          <Link to="/history" onClick={handleHistoryClick} className="text-lg">
+          History
+          </Link>
+          </a></li>
           <li><a href='/about'className='text-lg '>About</a></li>
         </ul>
       </div>
