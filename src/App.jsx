@@ -60,13 +60,10 @@ const QRGenerator = () =>  {
   }, [qrData]);
 
   const handleDynamicChange = async () => {
-    // Only check auth when user tries to check the box
     try {
       await axios.get(`${API_BASE_URL}/me`, { withCredentials: true });
-      // If authenticated, toggle the checkbox
       setIsDynamic(prev => !prev);
     } catch (err) {
-      // If not authenticated, show alert and keep unchecked
       alert('Please log in to use dynamic QR codes.');
       setIsDynamic(false);
     }

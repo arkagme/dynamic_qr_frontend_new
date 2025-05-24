@@ -7,6 +7,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const History = () =>{
     const [history, setHistory] = useState([]);
+    const [user, setUser] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -28,6 +29,17 @@ const History = () =>{
             setHistory([]);
         }
         setIsLoading(false);
+    };
+
+    const fetchUser = async () => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/me`, { withCredentials: true });
+            setUser(response.data);
+            console.log(response.data)
+        } catch (error) {
+            console.error('Error fetching history:', error);
+            setUser([]);
+        }
     };
 
     const handleDelete = async (id) => {
@@ -61,6 +73,10 @@ const History = () =>{
 
     useEffect(() => {
         fetchHistory();
+    }, []);
+
+    useEffect(() => {
+        fetchUser();
     }, []);
 
 
@@ -102,7 +118,7 @@ const History = () =>{
             </div>
             <div className="headerC-dash">
                 <a className="main1-dash">History</a>
-                <h1 className="main2-dash">Check the previous QR codes you have created</h1>
+                <h1 className="main2-dash">Welcome ${fetchUser} Check the previous QR codes you have created</h1>
             </div>
             <div className='dashboard'>
             <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100 mt-10 mx-4 lg:mx-10 xl:mx-20" 
