@@ -56,36 +56,40 @@ const Dashboard = () => {
 
     const qrImageUrl = `${API_BASE_ASSET_URL}/assets/${id}.png`;
 
-    const handleDownload = (e) => {
+const handleDownload = async (e) => {
     e.preventDefault();
     
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', qrImageUrl, true);
-    xhr.responseType = 'blob';
-    xhr.withCredentials = true;
-    
-    xhr.onload = function() {
-      if (this.status === 200) {
-        // Create a blob URL from the blob response
-        const blob = new Blob([this.response], {type: 'image/png'});
-        const url = window.URL.createObjectURL(blob);
+    try {
+        // Use fetch instead of XMLHttpRequest
+        const response = await fetch(qrImageUrl, {
+            credentials: 'include'
+        });
         
-        // Create a link element and trigger download
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        a.download = `qrcode-${id}.png`;
-        document.body.appendChild(a);
-        a.click();
-        
-        // Clean up
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      }
-    };
-    
-    xhr.send();
-  };
+        if (response.ok) {
+            const blob = await response.blob();
+            
+            // Create download link
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `qrcode-${id}.png`;
+            a.style.display = 'none';
+            
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            // Clean up
+            URL.revokeObjectURL(url);
+        } else {
+            throw new Error('Failed to fetch image');
+        }
+    } catch (error) {
+        console.error('Download failed:', error);
+        // Fallback: open in new tab so user can right-click save
+        window.open(qrImageUrl, '_blank');
+    }
+};
 
     return (
     <>
