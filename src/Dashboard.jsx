@@ -56,19 +56,37 @@ const Dashboard = () => {
 
     const qrImageUrl = `${API_BASE_ASSET_URL}/assets/${id}.png`;
 
-const handleDownload = (e) => {
+    const handleDownload = (e) => {
     e.preventDefault();
     
-    // Create a temporary link and click it
-    const link = document.createElement('a');
-    link.href = qrImageUrl;
-    link.download = `qrcode-${id}.png`;
-    link.target = '_blank';
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', qrImageUrl, true);
+    xhr.responseType = 'blob';
+    xhr.withCredentials = true;
     
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-};
+    xhr.onload = function() {
+      if (this.status === 200) {
+        // Create a blob URL from the blob response
+        const blob = new Blob([this.response], {type: 'image/png'});
+        const url = window.URL.createObjectURL(blob);
+        
+        // Create a link element and trigger download
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = `qrcode-${id}.png`;
+        document.body.appendChild(a);
+        a.click();
+        
+        // Clean up
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }
+    };
+    
+    xhr.send();
+  };
+
     return (
     <>
     <div className="app">
