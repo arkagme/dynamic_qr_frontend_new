@@ -378,46 +378,51 @@ const QRGenerator = () =>  {
                 onChange={() => setWithLogo(!withLogo)}/>Add logo to QR Code
             </label><br></br>
               {withLogo && (
-    <div className="logo-selection-panel mt-4 p-4 border rounded-lg">
-      <h3 className="text-md font-semibold mb-2">Select Logo:</h3>
+                  <div className="logo-selection-panel mt-4 p-4 border rounded-lg">
+                      <h3 className="text-md font-semibold mb-2">Select Logo:</h3>
       
-      <div className="logo-grid grid grid-cols-5 gap-4 mb-4 max-h-40 overflow-y-auto">
-        {allLogos.map((logo, index) => (
-          <div 
-            key={index}
-            className={`logo-item p-1 border-2 cursor-pointer ${
-              selectedLogo === logo.url ? 'border-primary' : 'border-transparent'
-            }`}
-            onClick={() => setSelectedLogo(logo.url)}
-          >
-            <img 
-              src={logo.url} 
-              alt={logo.name} 
-              className="w-full h-12 object-contain"
-              crossOrigin="anonymous"
-            />
-          </div>
-        ))}
-      </div>
+                      <div className="logo-grid grid grid-cols-5 gap-4 mb-4 max-h-40 overflow-y-auto">
+                        {allLogos.map((logo, index) => (
+                          <div 
+                            key={index}
+                            className={`logo-item p-1 border-2 cursor-pointer ${
+                            selectedLogo === logo.url ? 'border-primary' : 'border-transparent'
+                        }`}
+                        onClick={() => setSelectedLogo(logo.url)}
+                    >
+                      <img 
+                        src={logo.url} 
+                        alt={logo.name} 
+                        className="w-full h-12 object-contain"
+                        crossOrigin="anonymous"
+                      />
+                    </div>
+                  ))}
+                  </div>
 
-      <input 
-        type="file"
-        id="logo-upload"
-        accept="image/png"
-        className="hidden"
-        onChange={handleLogoUpload}
-      />
+                <input 
+                    type="file"
+                    id="logo-upload"
+                    accept="image/png"
+                    className="hidden"
+                    onChange={handleLogoUpload}
+                />
       
-      <button
-        type="button"
-        onClick={() => document.getElementById('logo-upload').click()}
-        className="btn btn-outline btn-sm w-full"
-        disabled={isUploading}
-      >
-        {isUploading ? 'Uploading...' : 'Upload Own Logo (PNG <5MB)'}
-      </button>
-    </div>
-  )}
+                <button
+                type="button"
+                  onClick={async () => {
+                  const isAuthenticated = await checkAuth(true);
+                  if (isAuthenticated) {
+                    document.getElementById('logo-upload').click();
+                  }
+              }}
+                className="btn btn-outline btn-sm w-full"
+                disabled={isUploading}
+                >
+                {isUploading ? 'Uploading...' : 'Upload Own Logo (PNG <5MB)'}
+              </button>
+              </div>
+              )}
             <button  
               type="submit" 
               disabled={isLoading || !url} 
