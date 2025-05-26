@@ -42,7 +42,8 @@ const History = () =>{
             setUser(null);
         }
     };
-    fetchUser(); })
+    fetchUser(); 
+    },[])
 
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this QR code?")) return;
