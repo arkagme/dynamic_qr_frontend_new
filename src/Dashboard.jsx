@@ -56,41 +56,19 @@ const Dashboard = () => {
 
     const qrImageUrl = `${API_BASE_ASSET_URL}/assets/${id}.png`;
 
-const handleDownload = async (e) => {
+const handleDownload = (e) => {
     e.preventDefault();
     
-    try {
-        // Use fetch instead of XMLHttpRequest
-        const response = await fetch(qrImageUrl, {
-            credentials: 'include'
-        });
-        
-        if (response.ok) {
-            const blob = await response.blob();
-            
-            // Create download link
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `qrcode-${id}.png`;
-            a.style.display = 'none';
-            
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            
-            // Clean up
-            URL.revokeObjectURL(url);
-        } else {
-            throw new Error('Failed to fetch image');
-        }
-    } catch (error) {
-        console.error('Download failed:', error);
-        // Fallback: open in new tab so user can right-click save
-        window.open(qrImageUrl, '_blank');
-    }
+    // Create a temporary link and click it
+    const link = document.createElement('a');
+    link.href = qrImageUrl;
+    link.download = `qrcode-${id}.png`;
+    link.target = '_blank';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 };
-
     return (
     <>
     <div className="app">
