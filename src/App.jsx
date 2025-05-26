@@ -5,6 +5,25 @@ import { Link , useNavigate} from 'react-router-dom';
 import axios from 'axios';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+const predefinedLogos = [
+  {
+    name: 'Google (Transparent)',
+    url: 'https://logo.arkagme.biz/api/shares/logo-1748280593119-urax1yn9/files/22675f81-6959-41ad-bd13-1c74aa31b9ce?display=true'
+  },
+  {
+    name: 'Instagram',
+    url: 'https://logo.arkagme.biz/api/shares/logo-1748281069815-cjcucz5x/files/91d2d57e-8098-4766-bcba-c4a44af5c68a?display=true'
+  },
+  {
+    name: 'X (Twitter)',
+    url: 'https://logo.arkagme.biz/api/shares/logo-1748281316345-f7s469iu/files/a88604c0-cb67-4457-a65e-abc1fe7bbcd5?display=true'
+  },
+  {
+    name: 'Facebook',
+    url: 'https://logo.arkagme.biz/api/shares/logo-1748281584570-jnykwep8/files/ecd8e16e-b6ad-4a16-8ee7-96881e49bc67?display=true'
+  }
+];
+
 const QRGenerator = () =>  {
   const [url, setUrl] = useState('');
   const [isDynamic, setIsDynamic] = useState(false);
@@ -17,6 +36,12 @@ const QRGenerator = () =>  {
   const [displayQrValue, setDisplayQrValue] = useState('https://example.com');
   const [isGenerated, setIsGenerated] = useState(false);
   const navigate = useNavigate();
+  const [userLogos, setUserLogos] = useState([]);
+  const [selectedLogo, setSelectedLogo] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+  const [authStatus, setAuthStatus] = useState(null);
+  const [authChecking, setAuthChecking] = useState(false);
+  const allLogos = [...predefinedLogos, ...userLogos];
 
 
   const handleLogin = () => {
@@ -40,7 +65,7 @@ const QRGenerator = () =>  {
 
   useEffect(() => {
     const saveQRAfterRender = async () => {
-      if (qrData && qrRef.current) {
+      if (qrData && qrData.isDynamic && qrRef.current) {
         try {
           await saveQRCode(qrData.trackingId || 'qrcode');
         } catch (error) {
@@ -60,14 +85,38 @@ const QRGenerator = () =>  {
     }
   }, [qrData]);
 
-  const handleDynamicChange = async () => {
-    try {
-      await axios.get(`${API_BASE_URL}/me`, { withCredentials: true });
-      setIsDynamic(prev => !prev);
-    } catch (err) {
-      alert('Please log in to use dynamic QR codes.');
-      setIsDynamic(false);
+  const checkAuth = async (requireAuth = true) => {
+    if (!authChecking && authStatus !== null) {
+    if (!requireAuth) return authStatus;
+    if (!authStatus && requireAuth) {
+      alert('Please log in to access this feature.');
     }
+    return authStatus;
+  }
+  setAuthChecking(true);
+    try {
+    await axios.get(`${API_BASE_URL}/me`, { withCredentials: true });
+    setAuthStatus(true);
+    return true;
+  } catch (error) {
+    console.error('Auth check failed:', error);
+    setAuthStatus(false);
+    if (requireAuth) {
+      alert('Please log in to access this feature.');
+    }
+    return false;
+  } finally {
+    setAuthChecking(false);
+  }
+  };
+
+  const handleDynamicChange = async () => {
+  const isAuthenticated = await checkAuth(true);
+  if (isAuthenticated) {
+    setIsDynamic(prev => !prev);
+  } else {
+    setIsDynamic(false);
+  }
   };
 
   const handleSubmit = async (e) => {
@@ -120,8 +169,8 @@ const QRGenerator = () =>  {
       const img = new Image();
       const logoImg = new Image();
       logoImg.crossOrigin = "anonymous";
-      logoImg.src = "https://iili.io/39yM50u.md.png";
-      
+      logoImg.src = selectedLogo || predefinedLogos[0].url;
+      //https://iili.io/39yM50u.md.png
       Promise.all([
         new Promise((innerResolve) => {
           img.onload = innerResolve;
@@ -190,23 +239,64 @@ const QRGenerator = () =>  {
     }
   };
 
-  const checkAuth = async () => {
-  try {
-    await axios.get(`${API_BASE_URL}/me`, { withCredentials: true });
-    return true;
-  } catch (error) {
-    alert('Please log in to access history.');
-    return false;
-    }
-  };
 
   const handleHistoryClick = async (e) => {
   e.preventDefault();
-  const isAuthenticated = await checkAuth();
+  const isAuthenticated = await checkAuth(true);
   if (isAuthenticated) {
     navigate('/history');
   }
 };
+
+ const handleLogoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    // Validate file
+    if (file.type !== 'image/png') {
+      alert('Only PNG files are allowed');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size must be less than 5MB');
+      return;
+    }
+    e.target.value = '';
+
+    setIsUploading(true);
+    
+    try {
+      const formData = new FormData();
+      formData.append('logo', file);
+
+      const response = await axios.post(
+        `${API_BASE_URL}/uploadlogo`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          withCredentials: true
+        }
+      );
+
+      if (response.data.success) {
+      const newLogo = {
+        name: `My Logo ${userLogos.length + 1}`,
+        url: response.data.details.directFileUrl  // ✅ Correct path
+      };
+
+      setUserLogos(prev => [...prev, newLogo]);
+      setSelectedLogo(response.data.details.directFileUrl);  // ✅ Correct path
+      alert('Logo uploaded successfully!');
+    }
+    } catch (error) {
+      console.error('Upload failed:', error);
+      alert('Logo upload failed');
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
 
 
@@ -240,10 +330,10 @@ const QRGenerator = () =>  {
           <ul
             tabIndex={0}
             className="menu menu-sm dropdown-content bg-base-200 rounded-box z-1 mt-3 w-80 h-35 p-2 shadow shadow flex flex-col items-center text-center">
-            <li><a>
+            <li>
             <Link to="/history" onClick={handleHistoryClick} className="text-lg">
               History
-            </Link></a></li>
+            </Link></li>
             <li><a href='/about'className='text-lg '>About</a></li>
             <li><button type="button" onClick={handleLogout} className="btn btn-outline btn-error btn-sm w-24 mx-auto mt-2"
                     style={{ minWidth: '90px', fontSize: '0.95rem', padding: '0.55rem 0.6rem' }}>Logout</button></li>
@@ -287,6 +377,47 @@ const QRGenerator = () =>  {
                 checked={withLogo} 
                 onChange={() => setWithLogo(!withLogo)}/>Add logo to QR Code
             </label><br></br>
+              {withLogo && (
+    <div className="logo-selection-panel mt-4 p-4 border rounded-lg">
+      <h3 className="text-md font-semibold mb-2">Select Logo:</h3>
+      
+      <div className="logo-grid grid grid-cols-5 gap-4 mb-4 max-h-40 overflow-y-auto">
+        {allLogos.map((logo, index) => (
+          <div 
+            key={index}
+            className={`logo-item p-1 border-2 cursor-pointer ${
+              selectedLogo === logo.url ? 'border-primary' : 'border-transparent'
+            }`}
+            onClick={() => setSelectedLogo(logo.url)}
+          >
+            <img 
+              src={logo.url} 
+              alt={logo.name} 
+              className="w-full h-12 object-contain"
+              crossOrigin="anonymous"
+            />
+          </div>
+        ))}
+      </div>
+
+      <input 
+        type="file"
+        id="logo-upload"
+        accept="image/png"
+        className="hidden"
+        onChange={handleLogoUpload}
+      />
+      
+      <button
+        type="button"
+        onClick={() => document.getElementById('logo-upload').click()}
+        className="btn btn-outline btn-sm w-full"
+        disabled={isUploading}
+      >
+        {isUploading ? 'Uploading...' : 'Upload Own Logo (PNG <5MB)'}
+      </button>
+    </div>
+  )}
             <button  
               type="submit" 
               disabled={isLoading || !url} 
@@ -303,7 +434,8 @@ const QRGenerator = () =>  {
                 marginSize={4}
                 imageSettings={
                   withLogo ? {
-                    src: "https://iili.io/39yM50u.md.png",
+                    src: selectedLogo || predefinedLogos[0].url,
+                    //https://iili.io/39yM50u.md.png
                     excavate: true,
                     height: 35,
                     width: 35,
