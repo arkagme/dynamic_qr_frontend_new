@@ -62,6 +62,7 @@ const Dashboard = () => {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', qrImageUrl, true);
     xhr.responseType = 'blob';
+    xhr.withCredentials = true;
     
     xhr.onload = function() {
       if (this.status === 200) {
