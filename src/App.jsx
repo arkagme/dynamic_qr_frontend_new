@@ -146,21 +146,27 @@ const QRGenerator = () =>  {
 const handleLogoClick = (logo, event) => {
   if (logo.isUserUploaded) {
     const rect = event.target.getBoundingClientRect();
-    const popupWidth = 140; // Adjust to your popup's actual width
-    const popupHeight = 80; // Adjust to your popup's actual height
-    const gap = 8; // Space between logo and popup
+    const popupWidth = 160; // Set to your popup's width (in px)
+    const popupHeight = 80; // Set to your popup's height (in px)
+    const gap = 10; // Space between logo and popup
 
-    // Always place above the logo, centered
-    const x = rect.left + rect.width / 2 - popupWidth / 2 + window.scrollX;
+    // Center popup horizontally over the logo
+    let x = rect.left + rect.width / 2 - popupWidth / 2 + window.scrollX;
+
+    // Make sure popup doesn't go off the screen horizontally
+    x = Math.max(8, Math.min(x, window.innerWidth - popupWidth - 8));
+
+    // Always position above the logo
     const y = rect.top - popupHeight - gap + window.scrollY;
 
-    setPopupPosition({ x, y, popupWidth });
+    setPopupPosition({ x, y, popupWidth, logoCenter: rect.left + rect.width / 2 + window.scrollX });
     setSelectedUserLogo(logo);
     setShowLogoPopup(true);
   } else {
     setSelectedLogo(logo.url);
   }
 };
+
 
   const handleAcceptLogo = () => {
     if (selectedUserLogo) {
@@ -528,7 +534,8 @@ const checkAuth = async (requireAuth = true) => {
                     left: `${popupPosition.x}px`,
                     top: `${popupPosition.y}px`,
                     width: `${popupPosition.popupWidth}px`,
-                    minWidth: '120px'
+                    minWidth: '120px',
+                    boxSizing: 'border-box',
                   }}
                 >
                   <div className="flex flex-col gap-2">
@@ -537,19 +544,23 @@ const checkAuth = async (requireAuth = true) => {
                   </div>
                   {/* Arrow at the bottom center */}
                   <div
-                    className="absolute left-1/2"
+                    className="logo-popup-arrow"
                     style={{
-                      bottom: '-10px', // Place arrow just below popup
+                      position: 'absolute',
+                      left: '50%',
+                      bottom: '-10px',
                       transform: 'translateX(-50%)',
                       width: 0,
                       height: 0,
-                      borderLeft: '8px solid transparent',
-                      borderRight: '8px solid transparent',
-                      borderTop: '10px solid #e5e7eb', // Match popup border color
+                      borderLeft: '10px solid transparent',
+                      borderRight: '10px solid transparent',
+                      borderTop: '10px solid #fff', // match popup background
+                      filter: 'drop-shadow(0 1px 2px #d1d5db)', // subtle shadow
                     }}
                   />
                 </div>
               )}
+
               </div>
               )}
             <button  
