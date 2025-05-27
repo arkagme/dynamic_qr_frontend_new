@@ -156,8 +156,8 @@ const handleLogoClick = (logo, event) => {
     const gap = 10;
 
     // Simple calculation: center popup above logo
-    const x = logoRect.left - containerRect.left + (logoRect.width / 2) - (popupWidth / 2) + 120;
-    const y = logoRect.top - containerRect.top - popupHeight - gap - 120;
+    const x = logoRect.left - containerRect.left + (logoRect.width / 2);
+    const y = logoRect.top - containerRect.top - popupHeight - gap;
 
     setPopupPosition({ 
       x: Math.max(0, Math.min(x, container.clientWidth - popupWidth)),
