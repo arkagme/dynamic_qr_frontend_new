@@ -540,13 +540,12 @@ useEffect(() => {
                         {allLogos.map((logo, index) => (
                           <div 
                             key={index}
-                            className={`logo-item p-1 border-2 cursor-pointer relative`}
-                            style={{
-                                border: '2px solid transparent', // Always transparent border
-                                backgroundColor: selectedLogo === logo.url ? '#fffacc' : '#ffffe4', // Slightly darker on select
-                                transition: 'background-color 0.2s'
-                            }}
-
+    className={`logo-item p-1 border-2 cursor-pointer relative`}
+    style={{
+      border: '2px solid transparent', // Always transparent border
+      backgroundColor: selectedLogo === logo.url ? '#90907D' : '#ffffe4', // Slightly darker on select
+      transition: 'background-color 0.2s'
+    }}
                         onClick={(event) => handleLogoClick(logo, event)}
                     >
                       <img 
