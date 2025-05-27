@@ -46,124 +46,6 @@ const QRGenerator = () =>  {
   const [selectedUserLogo, setSelectedUserLogo] = useState(null);
   const allLogos = [...predefinedLogos, ...userLogos];
 
-
-  const handleLogin = () => {
-  window.location.href = `${API_BASE_URL}/login/federated/google`;
-    };
-
-  const handleLogout = async () => {
-  await axios.post(`${API_BASE_URL}/logout`, {}, { withCredentials: true });
-  window.location.href = '/';
-    };
-
-  useEffect(() => {
-    if (!isGenerated) {
-      if (url.trim()) {
-        setDisplayQrValue(url);
-      } else {
-        setDisplayQrValue('https://example.com'); // Default placeholder when empty
-      }
-    }
-  }, [url, isGenerated]);
-
-  useEffect(() => {
-    const saveQRAfterRender = async () => {
-      if (qrData && qrData.isDynamic && qrRef.current) {
-        try {
-          await saveQRCode(qrData.trackingId || 'qrcode');
-        } catch (error) {
-          console.error('Error saving QR code after render:', error);
-        }
-      }
-    };
-
-    if (qrData) {
-      // delay to ensure the QR is fully rendered
-      const timer = setTimeout(() => {
-        setQrRendered(true);
-        saveQRAfterRender();
-      }, 500);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [qrData]);
-
-    // Fetch user logos when component mounts or when withLogo changes
-  useEffect(() => {
-    if (withLogo && authStatus) {
-      fetchUserLogos();
-    }
-  }, [withLogo, authStatus]);
-
-  const fetchUserLogos = async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/userlogos`, {
-        withCredentials: true
-      });
-      
-      if (response.data.success) {
-        const formattedLogos = response.data.logos.map((logo, index) => ({
-          name: `My Logo ${index + 1}`,
-          url: logo.url,
-          share_id: logo.share_id,
-          isUserUploaded: true
-        }));
-        setUserLogos(formattedLogos);
-      }
-    } catch (error) {
-      console.error('Error fetching user logos:', error);
-    }
-  };
-
-
-import './App.css'
-import React, { useState, useRef , useEffect } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
-import { Link , useNavigate} from 'react-router-dom';
-import axios from 'axios';
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-const predefinedLogos = [
-  {
-    name: 'Google (Transparent)',
-    url: 'https://logo.arkagme.biz/api/shares/logo-1748280593119-urax1yn9/files/22675f81-6959-41ad-bd13-1c74aa31b9ce?display=true'
-  },
-  {
-    name: 'Instagram',
-    url: 'https://logo.arkagme.biz/api/shares/logo-1748281069815-cjcucz5x/files/91d2d57e-8098-4766-bcba-c4a44af5c68a?display=true'
-  },
-  {
-    name: 'X (Twitter)',
-    url: 'https://logo.arkagme.biz/api/shares/logo-1748281316345-f7s469iu/files/a88604c0-cb67-4457-a65e-abc1fe7bbcd5?display=true'
-  },
-  {
-    name: 'Facebook',
-    url: 'https://logo.arkagmes.biz/api/shares/logo-1748281584570-jnykwep8/files/ecd8e16e-b6ad-4a16-8ee7-96881e49bc67?display=true'
-  }
-];
-
-const QRGenerator = () =>  {
-  const [url, setUrl] = useState('');
-  const [isDynamic, setIsDynamic] = useState(false);
-  const [withLogo, setWithLogo] = useState(false);
-  const [qrData, setQrData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [imagePath, setImagePath] = useState('');
-  const qrRef = useRef();
-  const [qrRendered, setQrRendered] = useState(false);
-  const [displayQrValue, setDisplayQrValue] = useState('https://example.com');
-  const [isGenerated, setIsGenerated] = useState(false);
-  const navigate = useNavigate();
-  const [userLogos, setUserLogos] = useState([]);
-  const [selectedLogo, setSelectedLogo] = useState('');
-  const [isUploading, setIsUploading] = useState(false);
-  const [authStatus, setAuthStatus] = useState(null);
-  const [authChecking, setAuthChecking] = useState(false);
-  const [showLogoPopup, setShowLogoPopup] = useState(false);
-  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
-  const [selectedUserLogo, setSelectedUserLogo] = useState(null);
-  const allLogos = [...predefinedLogos, ...userLogos];
-
   const handleLogin = () => {
   window.location.href = `${API_BASE_URL}/login/federated/google`;
     };
@@ -715,7 +597,6 @@ const QRGenerator = () =>  {
     </div>
     </>
   )
-}
 }
 
 export default QRGenerator
