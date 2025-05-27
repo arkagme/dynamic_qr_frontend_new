@@ -46,6 +46,7 @@ const QRGenerator = () =>  {
   const [selectedUserLogo, setSelectedUserLogo] = useState(null);
   const allLogos = [...predefinedLogos, ...userLogos];
   const logoContainerRef = useRef(null);
+  const logoSelectionRef = useRef(null);
 
   const handleLogin = () => {
   window.location.href = `${API_BASE_URL}/login/federated/google`;
@@ -533,10 +534,10 @@ useEffect(() => {
                 onChange={() => setWithLogo(!withLogo)}/>Add logo to QR Code
             </label><br></br>
             {withLogo && (
-                  <div className="logo-selection-panel mt-4 p-4 border rounded-lg relative" ref={logoContainerRef}>
+                  <div className="logo-selection-panel mt-4 p-4 border rounded-lg relative" ref={logoSelectionRef}>
                       <h3 className="text-md font-semibold mb-2">Select Logo:</h3>
       
-                      <div className="logo-grid grid grid-cols-5 gap-4 mb-4 max-h-40 overflow-y-auto">
+                      <div className="logo-grid grid grid-cols-5 gap-4 mb-4 max-h-40 overflow-y-auto" ref={logoContainerRef}>
                         {allLogos.map((logo, index) => (
                           <div 
                             key={index}
