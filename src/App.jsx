@@ -533,7 +533,7 @@ useEffect(() => {
                 onChange={() => setWithLogo(!withLogo)}/>Add logo to QR Code
             </label><br></br>
             {withLogo && (
-                  <div className="logo-selection-panel mt-4 p-4 border rounded-lg relative" ref={logoSelectionRef}>
+                  <div className="logo-selection-panel mt-4 p-4 border rounded-lg relative" ref={logoSelectionRef} style={{ border: '3px solid #151A48' , backgroundColor: '#1B2362' }}>
                 
       
                       <div className="logo-grid grid grid-cols-5 gap-4 mb-4 max-h-40 overflow-y-auto" ref={logoContainerRef}>
@@ -579,7 +579,7 @@ useEffect(() => {
                 className="btn btn-outline btn-primary btn-md w-full"
                 disabled={isUploading}
                 >
-                {isUploading ? 'Uploading...' : 'Upload Own Logo (PNG <5MB)'}
+                {isUploading ? 'Uploading...' : 'Upload Own Logo [ PNG <5MB ]'}
               </button>
               <LogoActionModal
                   isOpen={showLogoModal}
