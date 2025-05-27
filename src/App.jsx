@@ -146,26 +146,25 @@ const QRGenerator = () =>  {
 const handleLogoClick = (logo, event) => {
   if (logo.isUserUploaded) {
     const rect = event.target.getBoundingClientRect();
-    const popupWidth = 160; // Set to your popup's width (in px)
-    const popupHeight = 80; // Set to your popup's height (in px)
+    const popupWidth = 160; // Popup width in px
+    const popupHeight = 80; // Popup height in px
     const gap = 10; // Space between logo and popup
 
-    // Center popup horizontally over the logo
-    let x = rect.left + rect.width / 2 - popupWidth / 2 + window.scrollX;
-
-    // Make sure popup doesn't go off the screen horizontally
+    // For position: fixed, use viewport coordinates (do NOT add window.scrollX/Y)
+    let x = rect.left + rect.width / 2 - popupWidth / 2;
     x = Math.max(8, Math.min(x, window.innerWidth - popupWidth - 8));
 
-    // Always position above the logo
-    const y = rect.top - popupHeight - gap + window.scrollY;
+    // Always above the logo
+    const y = rect.top - popupHeight - gap;
 
-    setPopupPosition({ x, y, popupWidth, logoCenter: rect.left + rect.width / 2 + window.scrollX });
+    setPopupPosition({ x, y, popupWidth });
     setSelectedUserLogo(logo);
     setShowLogoPopup(true);
   } else {
     setSelectedLogo(logo.url);
   }
 };
+
 
 
   const handleAcceptLogo = () => {
@@ -546,7 +545,7 @@ const checkAuth = async (requireAuth = true) => {
                   <div
                     className="logo-popup-arrow"
                     style={{
-                      position: 'absolute',
+                      position: 'fixed',
                       left: '50%',
                       bottom: '-10px',
                       transform: 'translateX(-50%)',
