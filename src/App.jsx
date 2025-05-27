@@ -533,10 +533,10 @@ useEffect(() => {
                 onChange={() => setWithLogo(!withLogo)}/>Add logo to QR Code
             </label><br></br>
             {withLogo && (
-                  <div className="logo-selection-panel mt-4 p-4 border rounded-lg relative" ref={logoSelectionRef} style={{ border: '3px solid #151A48' , backgroundColor: '#1B2362' }}>
+                  <div className="logo-selection-panel mt-4 p-4 border rounded-lg relative" ref={logoSelectionRef} style={{ border: '3px solid #1B2362' , backgroundColor: '#1B2362' }}>
                 
       
-                      <div className="logo-grid grid grid-cols-5 gap-4 mb-4 max-h-40 overflow-y-auto" ref={logoContainerRef}>
+                      <div className="logo-grid grid grid-cols-5 gap-4 mb-4 max-h-40 overflow-y-auto" ref={logoContainerRef} style={{ border: '3px solid #1B2362' , backgroundColor: '#5968E2' }}>
                         {allLogos.map((logo, index) => (
                           <div 
                             key={index}
@@ -577,6 +577,11 @@ useEffect(() => {
               }}
         
                 className="btn btn-outline btn-primary btn-md w-full"
+                  style={{
+                      border: '3px solid #ffffe4',         // Border color
+                      color: '#ffffe4',               // Text color
+                      transition: 'all 0.2s'          // Smooth transition for hover
+                }}
                 disabled={isUploading}
                 >
                 {isUploading ? 'Uploading...' : 'Upload Own Logo [ PNG <5MB ]'}
