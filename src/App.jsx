@@ -89,10 +89,10 @@ const QRGenerator = () =>  {
 
   // Fetch user logos when component mounts or when withLogo changes
   useEffect(() => {
-    if (authStatus) {
+    if (authStatus && withLogo) {
       fetchUserLogos();
     }
-  }, [authStatus]);
+  }, [authStatus,withLogo]);
 
   const fetchUserLogos = async () => {
     try {
