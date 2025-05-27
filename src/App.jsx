@@ -45,6 +45,7 @@ const QRGenerator = () =>  {
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [selectedUserLogo, setSelectedUserLogo] = useState(null);
   const allLogos = [...predefinedLogos, ...userLogos];
+  const logoContainerRef = useRef(null);
 
   const handleLogin = () => {
   window.location.href = `${API_BASE_URL}/login/federated/google`;
@@ -145,25 +146,31 @@ const QRGenerator = () =>  {
 
 const handleLogoClick = (logo, event) => {
   if (logo.isUserUploaded) {
-    const rect = event.target.getBoundingClientRect();
-    const popupWidth = 160; // Popup width in px
-    const popupHeight = 80; // Popup height in px
-    const gap = 10; // Space between logo and popup
+    const container = logoContainerRef.current;
+    const logoRect = event.target.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    
+    const popupWidth = 160;
+    const popupHeight = 80;
+    const gap = 10;
 
-    // For position: fixed, use viewport coordinates (do NOT add window.scrollX/Y)
-    let x = rect.left + rect.width / 2 - popupWidth / 2;
-    x = Math.max(8, Math.min(x, window.innerWidth - popupWidth - 8));
+    // Calculate relative to container
+    const x = logoRect.left - containerRect.left + (logoRect.width / 2) - (popupWidth / 2);
+    const y = logoRect.top - containerRect.top - popupHeight - gap;
 
-    // Always above the logo
-    const y = rect.top - popupHeight - gap;
-
-    setPopupPosition({ x, y, popupWidth });
+    setPopupPosition({ 
+      x: Math.max(8, Math.min(x, container.clientWidth - popupWidth - 8)),
+      y,
+      popupWidth
+    });
+    
     setSelectedUserLogo(logo);
     setShowLogoPopup(true);
   } else {
     setSelectedLogo(logo.url);
   }
 };
+
 
 
 
@@ -398,6 +405,45 @@ const checkAuth = async (requireAuth = true) => {
   }, [showLogoPopup]);
 
 
+  useEffect(() => {
+  const container = logoContainerRef.current;
+  
+  const handleScroll = () => {
+    if (showLogoPopup && selectedUserLogo) {
+      // Recalculate position on scroll
+      const logos = Array.from(container.getElementsByClassName('logo-item'));
+      const targetLogo = logos.find(logo => 
+        logo.querySelector('img')?.src === selectedUserLogo.url
+      );
+      
+      if (targetLogo) {
+        const logoRect = targetLogo.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        
+        const x = logoRect.left - containerRect.left + (logoRect.width / 2) - (popupPosition.popupWidth / 2);
+        const y = logoRect.top - containerRect.top - popupPosition.popupHeight - 10;
+        
+        setPopupPosition(prev => ({
+          ...prev,
+          x: Math.max(8, Math.min(x, container.clientWidth - prev.popupWidth - 8)),
+          y
+        }));
+      }
+    }
+  };
+
+  if (container) {
+    container.addEventListener('scroll', handleScroll);
+  }
+
+  return () => {
+    if (container) {
+      container.removeEventListener('scroll', handleScroll);
+    }
+  };
+}, [showLogoPopup, selectedUserLogo, popupPosition.popupWidth, popupPosition.popupHeight]);
+
+
 
   return (
     <>
@@ -480,7 +526,8 @@ const checkAuth = async (requireAuth = true) => {
                   <div className="logo-selection-panel mt-4 p-4 border rounded-lg relative">
                       <h3 className="text-md font-semibold mb-2">Select Logo:</h3>
       
-                      <div className="logo-grid grid grid-cols-5 gap-4 mb-4 max-h-40 overflow-y-auto">
+                      <div className="logo-grid grid grid-cols-5 gap-4 mb-4 max-h-40 overflow-y-auto"
+                      ref={logoContainerRef}>
                         {allLogos.map((logo, index) => (
                           <div 
                             key={index}
@@ -528,7 +575,7 @@ const checkAuth = async (requireAuth = true) => {
               {/* Logo Popup */}
               {showLogoPopup && selectedUserLogo && (
                 <div
-                  className="logo-popup fixed z-50 bg-white border border-gray-300 rounded-lg shadow-lg p-3"
+                  className="logo-popup absolute z-50 bg-white border border-gray-300 rounded-lg shadow-lg p-3"
                   style={{
                     left: `${popupPosition.x}px`,
                     top: `${popupPosition.y}px`,
@@ -545,7 +592,7 @@ const checkAuth = async (requireAuth = true) => {
                   <div
                     className="logo-popup-arrow"
                     style={{
-                      position: 'fixed',
+                      position: 'absolute',
                       left: '50%',
                       bottom: '-10px',
                       transform: 'translateX(-50%)',
