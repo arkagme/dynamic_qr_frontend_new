@@ -148,7 +148,7 @@ const QRGenerator = () =>  {
       const rect = event.target.getBoundingClientRect();
       setPopupPosition({
         x: rect.left + rect.width / 2,
-        y: rect.top - 10
+        y: rect.top - 90
       });
       setSelectedUserLogo(logo);
       setShowLogoPopup(true);
