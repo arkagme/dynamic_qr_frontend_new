@@ -143,24 +143,54 @@ const QRGenerator = () =>  {
     }
   };
 
-    const handleLogoClick = (logo, event) => {
-    // Check if this is a user-uploaded logo
-    const isUserLogo = logo.isUserUploaded;
+const handleLogoClick = (logo, event) => {
+  const isUserLogo = logo.isUserUploaded;
+  
+  if (isUserLogo) {
+    const rect = event.target.getBoundingClientRect();
+    const viewport = {
+      width: window.innerWidth,
+      height: window.innerHeight
+    };
     
-    if (isUserLogo) {
-      // Show popup for user-uploaded logos
-      const rect = event.target.getBoundingClientRect();
-      setPopupPosition({
-        x: rect.left + rect.width / 2,
-        y: rect.top - 10
-      });
-      setSelectedUserLogo(logo);
-      setShowLogoPopup(true);
-    } else {
-      // Directly apply predefined logos
-      setSelectedLogo(logo.url);
+    // Calculate center position of the clicked logo
+    const iconCenterX = rect.left + (rect.width / 2);
+    const iconCenterY = rect.top;
+    
+    // Popup dimensions (approximate)
+    const popupWidth = 120;
+    const popupHeight = 80;
+    
+    // Calculate ideal position (centered above icon)
+    let x = iconCenterX;
+    let y = iconCenterY - popupHeight - 10; // 10px gap above icon
+    
+    // Boundary checking for viewport edges
+    const padding = 10;
+    
+    // Check left boundary
+    if (x - (popupWidth / 2) < padding) {
+      x = (popupWidth / 2) + padding;
     }
-  };
+    
+    // Check right boundary  
+    if (x + (popupWidth / 2) > viewport.width - padding) {
+      x = viewport.width - (popupWidth / 2) - padding;
+    }
+    
+    // Check top boundary (if popup would go above viewport)
+    if (y < padding) {
+      y = rect.bottom + 10; // Show below icon instead
+    }
+    
+    setPopupPosition({ x, y });
+    setSelectedUserLogo(logo);
+    setShowLogoPopup(true);
+  } else {
+    setSelectedLogo(logo.url);
+  }
+};
+
 
   const handleAcceptLogo = () => {
     if (selectedUserLogo) {
@@ -523,31 +553,50 @@ const checkAuth = async (requireAuth = true) => {
               {/* Logo Popup */}
               {showLogoPopup && selectedUserLogo && (
                 <div 
-                  className="logo-popup fixed z-50 bg-white border border-gray-300 rounded-lg shadow-lg p-3 min-w-[120px]"
+                  className="logo-popup fixed z-50 bg-white border border-gray-300 rounded-lg shadow-lg p-3"
                   style={{
-                    left: `${popupPosition.x - 60}px`,
-                    top: `${popupPosition.y - 80}px`,
-                    transform: 'translateX(-50%)'
+                    left: `${popupPosition.x}px`,
+                    top: `${popupPosition.y}px`,
+                    transform: 'translateX(-50%)',
+                    minWidth: '120px',
+                    maxWidth: '200px',
+                    // Responsive adjustments
+                    ...(window.innerWidth < 640 && {
+                      minWidth: '100px',
+                      fontSize: '0.875rem',
+                      padding: '0.5rem'
+                    })
                   }}
                 >
                   <div className="flex flex-col gap-2">
                     <button
                       onClick={handleAcceptLogo}
-                      className="btn btn-sm btn-primary w-full text-xs py-1"
+                      className="btn btn-sm btn-primary w-full text-xs py-1 h-8 min-h-8"
                     >
                       Accept
                     </button>
                     <button
                       onClick={handleDeleteLogo}
-                      className="btn btn-sm btn-error w-full text-xs py-1"
+                      className="btn btn-sm btn-error w-full text-xs py-1 h-8 min-h-8"
                     >
                       Delete
                     </button>
                   </div>
-                  {/* Popup arrow */}
+                  
+                  {/* Responsive arrow */}
                   <div 
-                    className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-300"
-                  ></div>
+                    className="absolute left-1/2 transform -translate-x-1/2"
+                    style={{
+                      top: popupPosition.y > 100 ? '-6px' : '100%', // Arrow on top if popup above, bottom if below
+                      borderLeft: '6px solid transparent',
+                      borderRight: '6px solid transparent',
+                      ...(popupPosition.y > 100 ? {
+                        borderBottom: '6px solid #d1d5db'
+                      } : {
+                        borderTop: '6px solid #d1d5db'
+                      })
+                    }}
+                  />
                 </div>
               )}
               </div>
