@@ -52,6 +52,26 @@
   border-radius : 20px;
   margin-left : 50px;
 }
+/* Modal overlay */
+.fixed.inset-0 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Modal content */
+.bg-white.rounded-lg {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/* Close button */
+.absolute.top-2.right-2 {
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 0.25rem;
+}
 
 @media ( max-width : 890px){
   .cardholder{

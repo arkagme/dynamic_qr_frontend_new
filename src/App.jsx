@@ -24,6 +24,48 @@ const predefinedLogos = [
   }
 ];
 
+// Add this new component near the top of your file
+const LogoActionModal = ({ 
+  isOpen, 
+  onClose, 
+  onAccept, 
+  onDelete,
+  logoName 
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-80 relative">
+        <button 
+          onClick={onClose}
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+        >
+          ×
+        </button>
+        <h3 className="text-lg font-semibold mb-4">Logo Actions</h3>
+        <div className="flex flex-col gap-3">
+          <p>Selected logo: {logoName}</p>
+          <div className="flex gap-2 justify-end">
+            <button 
+              onClick={onDelete}
+              className="btn btn-error btn-sm"
+            >
+              Delete
+            </button>
+            <button 
+              onClick={onAccept}
+              className="btn btn-primary btn-sm"
+            >
+              Accept
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const QRGenerator = () =>  {
   const [url, setUrl] = useState('');
   const [isDynamic, setIsDynamic] = useState(false);
@@ -47,6 +89,8 @@ const QRGenerator = () =>  {
   const allLogos = [...predefinedLogos, ...userLogos];
   const logoContainerRef = useRef(null);
   const logoSelectionRef = useRef(null);
+  const [showLogoModal, setShowLogoModal] = useState(false);
+  const [selectedLogoForModal, setSelectedLogoForModal] = useState(null);
 
   const handleLogin = () => {
   window.location.href = `${API_BASE_URL}/login/federated/google`;
@@ -145,46 +189,29 @@ const QRGenerator = () =>  {
     }
   };
 
-const handleLogoClick = (logo, event) => {
-  if (logo.isUserUploaded) {
-    const logoRect = event.target.getBoundingClientRect();
-    const container = logoContainerRef.current;
-    const containerRect = container.getBoundingClientRect();
-    
-    const popupWidth = 160;
-    const popupHeight = 80;
-    const gap = 10;
-
-    // Simple calculation: center popup above logo
-    const x = logoRect.left - containerRect.left + (logoRect.width / 2);
-    const y = logoRect.top - containerRect.top - popupHeight - gap;
-
-    setPopupPosition({ 
-      x: Math.max(0, Math.min(x, container.clientWidth - popupWidth)),
-      y,
-      popupWidth,
-      popupHeight
-    });
-    
-    setSelectedUserLogo(logo);
-    setShowLogoPopup(true);
-  } else {
-    setSelectedLogo(logo.url);
-  }
-};
+  const handleLogoClick = (logo, event) => {
+    if (logo.isUserUploaded) {
+      setSelectedLogoForModal(logo);
+      setShowLogoModal(true);
+    } else {
+      setSelectedLogo(logo.url);
+    }
+  };
 
   const handleAcceptLogo = () => {
-    if (selectedUserLogo) {
-      setSelectedLogo(selectedUserLogo.url);
+    if (selectedLogoForModal) {
+      setSelectedLogo(selectedLogoForModal.url);
     }
-    setShowLogoPopup(false);
-    setSelectedUserLogo(null);
+    setShowLogoModal(false);
+    setSelectedLogoForModal(null);
   };
 
   const handleDeleteLogo = () => {
-    if (selectedUserLogo && selectedUserLogo.share_id) {
-      deleteUserLogo(selectedUserLogo.share_id);
+    if (selectedLogoForModal?.share_id) {
+      deleteUserLogo(selectedLogoForModal.share_id);
     }
+    setShowLogoModal(false);
+    setSelectedLogoForModal(null);
   };
 
 const checkAuth = async (requireAuth = true) => {
@@ -557,35 +584,13 @@ useEffect(() => {
 
               {/* Logo Popup */}
               {showLogoPopup && selectedUserLogo && (
-                <div
-                  className="logo-popup absolute z-50 bg-white border border-gray-300 rounded-lg shadow-lg p-3"
-                  style={{
-                    left: `${popupPosition.x}px`,
-                    top: `${popupPosition.y}px`,
-                    width: `${popupPosition.popupWidth}px`,
-                    minWidth: '120px',
-                    boxSizing: 'border-box',
-                  }}
-                >
-                  <div className="flex flex-col gap-2">
-                    <button onClick={handleAcceptLogo} className="btn btn-sm btn-primary w-full text-xs py-1">Accept</button>
-                    <button onClick={handleDeleteLogo} className="btn btn-sm btn-error w-full text-xs py-1">Delete</button>
-                  </div>
-                  {/* Arrow pointing down to logo */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      left: '50%',
-                      bottom: '-8px',
-                      transform: 'translateX(-50%)',
-                      width: 0,
-                      height: 0,
-                      borderLeft: '8px solid transparent',
-                      borderRight: '8px solid transparent',
-                      borderTop: '8px solid white',
-                    }}
-                  />
-                </div>
+                  <LogoActionModal
+    isOpen={showLogoModal}
+    onClose={() => setShowLogoModal(false)}
+    onAccept={handleAcceptLogo}
+    onDelete={handleDeleteLogo}
+    logoName={selectedLogoForModal?.name || ''}
+  />
               )}
 
 
