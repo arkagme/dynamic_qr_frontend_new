@@ -43,9 +43,9 @@ const LogoActionModal = ({
         >
           ×
         </button>
-        <h3 className="text-lg font-semibold mb-4">Logo Actions</h3>
+        <h3 className="text-lg font-semibold mb-4 text-black">Logo Actions</h3>
         <div className="flex flex-col gap-3">
-          <p>Selected logo: {logoName}</p>
+          <p className="text-black">Selected logo: {logoName}</p>
           <div className="flex gap-2 justify-end">
             <button 
               onClick={onDelete}
