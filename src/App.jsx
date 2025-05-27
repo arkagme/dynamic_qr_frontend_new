@@ -92,10 +92,11 @@ const QRGenerator = () =>  {
     if (authStatus && withLogo) {
       fetchUserLogos();
     }
-    if (!withLogo) {
-    setUserLogos([]);
-  }
   }, [authStatus,withLogo]);
+
+  useEffect(() => {
+  checkAuth(false); // Pass false to avoid login prompt
+}, []);
 
   const fetchUserLogos = async () => {
     try {
@@ -175,21 +176,15 @@ const QRGenerator = () =>  {
     }
   };
 
-  const checkAuth = async (requireAuth = true) => {
-    if (!authChecking && authStatus !== null) {
-    if (!requireAuth) return authStatus;
-    if (!authStatus && requireAuth) {
-      alert('Please log in to access this feature.');
-    }
-    return authStatus;
-  }
+const checkAuth = async (requireAuth = true) => {
   setAuthChecking(true);
-    try {
-    await axios.get(`${API_BASE_URL}/me`, { withCredentials: true });
+  try {
+    await axios.get(`${API_BASE_URL}/me`, { 
+      withCredentials: true 
+    });
     setAuthStatus(true);
     return true;
   } catch (error) {
-    console.error('Auth check failed:', error);
     setAuthStatus(false);
     if (requireAuth) {
       alert('Please log in to access this feature.');
@@ -198,7 +193,8 @@ const QRGenerator = () =>  {
   } finally {
     setAuthChecking(false);
   }
-  };
+};
+
 
   const handleDynamicChange = async () => {
   const isAuthenticated = await checkAuth(true);
