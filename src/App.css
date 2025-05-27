@@ -53,6 +53,19 @@
   margin-left : 50px;
 }
 
+.logo-popup .arrow {
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid #e5e7eb;
+}
+
+
 @media ( max-width : 890px){
   .cardholder{
     padding-top : 10px;

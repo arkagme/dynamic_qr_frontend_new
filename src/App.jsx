@@ -144,38 +144,23 @@ const QRGenerator = () =>  {
   };
 
 const handleLogoClick = (logo, event) => {
-  const isUserLogo = logo.isUserUploaded;
-  if (isUserLogo) {
+  if (logo.isUserUploaded) {
     const rect = event.target.getBoundingClientRect();
-    const popupWidth = 140; // Set this to your popup's width in px
-    const popupHeight = 90; // Set this to your popup's height in px
-    const gap = 8; // px gap between logo and popup
+    const popupWidth = 140; // Adjust to your popup's actual width
+    const popupHeight = 80; // Adjust to your popup's actual height
+    const gap = 8; // Space between logo and popup
 
-    // Try to position above, but if not enough space, position below
-    const enoughSpaceAbove = rect.top > popupHeight + gap;
-    let top, arrowDirection;
-    if (enoughSpaceAbove) {
-      // Popup above logo
-      top = rect.top - popupHeight - gap + window.scrollY;
-      arrowDirection = 'bottom';
-    } else {
-      // Popup below logo
-      top = rect.bottom + gap + window.scrollY;
-      arrowDirection = 'top';
-    }
+    // Always place above the logo, centered
+    const x = rect.left + rect.width / 2 - popupWidth / 2 + window.scrollX;
+    const y = rect.top - popupHeight - gap + window.scrollY;
 
-    // Center popup horizontally over logo
-    const left = rect.left + rect.width / 2 - popupWidth / 2 + window.scrollX;
-
-    setPopupPosition({ left, top, arrowDirection, logoCenter: rect.left + rect.width / 2 });
+    setPopupPosition({ x, y, popupWidth });
     setSelectedUserLogo(logo);
     setShowLogoPopup(true);
   } else {
     setSelectedLogo(logo.url);
   }
 };
-
-
 
   const handleAcceptLogo = () => {
     if (selectedUserLogo) {
@@ -540,29 +525,27 @@ const checkAuth = async (requireAuth = true) => {
                 <div
                   className="logo-popup fixed z-50 bg-white border border-gray-300 rounded-lg shadow-lg p-3"
                   style={{
-                    left: popupPosition.left,
-                    top: popupPosition.top,
-                    width: 140,
-                    minWidth: 120,
-                    maxWidth: 200,
+                    left: `${popupPosition.x}px`,
+                    top: `${popupPosition.y}px`,
+                    width: `${popupPosition.popupWidth}px`,
+                    minWidth: '120px'
                   }}
                 >
                   <div className="flex flex-col gap-2">
                     <button onClick={handleAcceptLogo} className="btn btn-sm btn-primary w-full text-xs py-1">Accept</button>
                     <button onClick={handleDeleteLogo} className="btn btn-sm btn-error w-full text-xs py-1">Delete</button>
                   </div>
-                  {/* Arrow */}
+                  {/* Arrow at the bottom center */}
                   <div
-                    className={`absolute ${popupPosition.arrowDirection === 'top' ? 'top-0' : 'bottom-0'} left-1/2`}
+                    className="absolute left-1/2"
                     style={{
-                      transform: 'translate(-50%, ' + (popupPosition.arrowDirection === 'top' ? '-100%' : '100%') + ')',
+                      bottom: '-10px', // Place arrow just below popup
+                      transform: 'translateX(-50%)',
                       width: 0,
                       height: 0,
                       borderLeft: '8px solid transparent',
                       borderRight: '8px solid transparent',
-                      ...(popupPosition.arrowDirection === 'top'
-                        ? { borderBottom: '8px solid #d1d5db' }
-                        : { borderTop: '8px solid #d1d5db' }),
+                      borderTop: '10px solid #e5e7eb', // Match popup border color
                     }}
                   />
                 </div>
