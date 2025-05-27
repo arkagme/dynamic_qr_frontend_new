@@ -84,7 +84,6 @@ const QRGenerator = () =>  {
   const [authStatus, setAuthStatus] = useState(null);
   const [authChecking, setAuthChecking] = useState(false);
   const [showLogoPopup, setShowLogoPopup] = useState(false);
-  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   const [selectedUserLogo, setSelectedUserLogo] = useState(null);
   const allLogos = [...predefinedLogos, ...userLogos];
   const logoContainerRef = useRef(null);
@@ -581,17 +580,13 @@ useEffect(() => {
                 >
                 {isUploading ? 'Uploading...' : 'Upload Own Logo (PNG <5MB)'}
               </button>
-
-              {/* Logo Popup */}
-              {showLogoPopup && selectedUserLogo && (
-                  <LogoActionModal
-    isOpen={showLogoModal}
-    onClose={() => setShowLogoModal(false)}
-    onAccept={handleAcceptLogo}
-    onDelete={handleDeleteLogo}
-    logoName={selectedLogoForModal?.name || ''}
-  />
-              )}
+              <LogoActionModal
+                  isOpen={showLogoModal}
+                  onClose={() => setShowLogoModal(false)}
+                  onAccept={handleAcceptLogo}
+                  onDelete={handleDeleteLogo}
+                  logoName={selectedLogoForModal?.name || ''}
+              />
 
 
               </div>
