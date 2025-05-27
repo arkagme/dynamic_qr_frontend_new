@@ -92,6 +92,9 @@ const QRGenerator = () =>  {
     if (authStatus && withLogo) {
       fetchUserLogos();
     }
+    if (!withLogo) {
+    setUserLogos([]);
+  }
   }, [authStatus,withLogo]);
 
   const fetchUserLogos = async () => {
