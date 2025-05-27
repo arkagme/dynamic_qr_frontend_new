@@ -536,7 +536,7 @@ useEffect(() => {
                   <div className="logo-selection-panel mt-4 p-4 border rounded-lg relative" ref={logoSelectionRef} style={{ border: '3px solid #1B2362' , backgroundColor: '#1B2362' }}>
                 
       
-                      <div className="logo-grid grid grid-cols-5 gap-4 mb-4 max-h-40 overflow-y-auto" ref={logoContainerRef} style={{ border: '3px solid #1B2362' , backgroundColor: '#5968E2' }}>
+                      <div className="logo-grid grid grid-cols-5 gap-4 mb-4 max-h-40 overflow-y-auto" ref={logoContainerRef} style={{ border: '3px solid #1B2362' , backgroundColor: '#ffffe4' }}>
                         {allLogos.map((logo, index) => (
                           <div 
                             key={index}
