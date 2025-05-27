@@ -145,51 +145,36 @@ const QRGenerator = () =>  {
 
 const handleLogoClick = (logo, event) => {
   const isUserLogo = logo.isUserUploaded;
-  
   if (isUserLogo) {
     const rect = event.target.getBoundingClientRect();
-    const viewport = {
-      width: window.innerWidth,
-      height: window.innerHeight
-    };
-    
-    // Calculate center position of the clicked logo
-    const iconCenterX = rect.left + (rect.width / 2);
-    const iconCenterY = rect.top;
-    
-    // Popup dimensions (approximate)
-    const popupWidth = 120;
-    const popupHeight = 80;
-    
-    // Calculate ideal position (centered above icon)
-    let x = iconCenterX;
-    let y = iconCenterY - popupHeight - 10; // 10px gap above icon
-    
-    // Boundary checking for viewport edges
-    const padding = 10;
-    
-    // Check left boundary
-    if (x - (popupWidth / 2) < padding) {
-      x = (popupWidth / 2) + padding;
+    const popupWidth = 140; // Set this to your popup's width in px
+    const popupHeight = 90; // Set this to your popup's height in px
+    const gap = 8; // px gap between logo and popup
+
+    // Try to position above, but if not enough space, position below
+    const enoughSpaceAbove = rect.top > popupHeight + gap;
+    let top, arrowDirection;
+    if (enoughSpaceAbove) {
+      // Popup above logo
+      top = rect.top - popupHeight - gap + window.scrollY;
+      arrowDirection = 'bottom';
+    } else {
+      // Popup below logo
+      top = rect.bottom + gap + window.scrollY;
+      arrowDirection = 'top';
     }
-    
-    // Check right boundary  
-    if (x + (popupWidth / 2) > viewport.width - padding) {
-      x = viewport.width - (popupWidth / 2) - padding;
-    }
-    
-    // Check top boundary (if popup would go above viewport)
-    if (y < padding) {
-      y = rect.bottom + 10; // Show below icon instead
-    }
-    
-    setPopupPosition({ x, y });
+
+    // Center popup horizontally over logo
+    const left = rect.left + rect.width / 2 - popupWidth / 2 + window.scrollX;
+
+    setPopupPosition({ left, top, arrowDirection, logoCenter: rect.left + rect.width / 2 });
     setSelectedUserLogo(logo);
     setShowLogoPopup(true);
   } else {
     setSelectedLogo(logo.url);
   }
 };
+
 
 
   const handleAcceptLogo = () => {
@@ -552,49 +537,32 @@ const checkAuth = async (requireAuth = true) => {
 
               {/* Logo Popup */}
               {showLogoPopup && selectedUserLogo && (
-                <div 
+                <div
                   className="logo-popup fixed z-50 bg-white border border-gray-300 rounded-lg shadow-lg p-3"
                   style={{
-                    left: `${popupPosition.x}px`,
-                    top: `${popupPosition.y}px`,
-                    transform: 'translateX(-50%)',
-                    minWidth: '120px',
-                    maxWidth: '200px',
-                    // Responsive adjustments
-                    ...(window.innerWidth < 640 && {
-                      minWidth: '100px',
-                      fontSize: '0.875rem',
-                      padding: '0.5rem'
-                    })
+                    left: popupPosition.left,
+                    top: popupPosition.top,
+                    width: 140,
+                    minWidth: 120,
+                    maxWidth: 200,
                   }}
                 >
                   <div className="flex flex-col gap-2">
-                    <button
-                      onClick={handleAcceptLogo}
-                      className="btn btn-sm btn-primary w-full text-xs py-1 h-8 min-h-8"
-                    >
-                      Accept
-                    </button>
-                    <button
-                      onClick={handleDeleteLogo}
-                      className="btn btn-sm btn-error w-full text-xs py-1 h-8 min-h-8"
-                    >
-                      Delete
-                    </button>
+                    <button onClick={handleAcceptLogo} className="btn btn-sm btn-primary w-full text-xs py-1">Accept</button>
+                    <button onClick={handleDeleteLogo} className="btn btn-sm btn-error w-full text-xs py-1">Delete</button>
                   </div>
-                  
-                  {/* Responsive arrow */}
-                  <div 
-                    className="absolute left-1/2 transform -translate-x-1/2"
+                  {/* Arrow */}
+                  <div
+                    className={`absolute ${popupPosition.arrowDirection === 'top' ? 'top-0' : 'bottom-0'} left-1/2`}
                     style={{
-                      top: popupPosition.y > 100 ? '-6px' : '100%', // Arrow on top if popup above, bottom if below
-                      borderLeft: '6px solid transparent',
-                      borderRight: '6px solid transparent',
-                      ...(popupPosition.y > 100 ? {
-                        borderBottom: '6px solid #d1d5db'
-                      } : {
-                        borderTop: '6px solid #d1d5db'
-                      })
+                      transform: 'translate(-50%, ' + (popupPosition.arrowDirection === 'top' ? '-100%' : '100%') + ')',
+                      width: 0,
+                      height: 0,
+                      borderLeft: '8px solid transparent',
+                      borderRight: '8px solid transparent',
+                      ...(popupPosition.arrowDirection === 'top'
+                        ? { borderBottom: '8px solid #d1d5db' }
+                        : { borderTop: '8px solid #d1d5db' }),
                     }}
                   />
                 </div>
