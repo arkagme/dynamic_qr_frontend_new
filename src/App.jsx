@@ -146,22 +146,27 @@ const QRGenerator = () =>  {
 
 const handleLogoClick = (logo, event) => {
   if (logo.isUserUploaded) {
-    const container = logoContainerRef.current;
+    const panel = logoSelectionRef.current;
     const logoRect = event.target.getBoundingClientRect();
-    const containerRect = container.getBoundingClientRect();
+    const panelRect = panel.getBoundingClientRect();
     
     const popupWidth = 160;
     const popupHeight = 80;
     const gap = 10;
 
-    // Calculate relative to container
-    const x = logoRect.left - containerRect.left + (logoRect.width / 2) - (popupWidth / 2);
-    const y = logoRect.top - containerRect.top - popupHeight - gap;
+    // Calculate position relative to the panel (not the grid)
+    const x = logoRect.left - panelRect.left + (logoRect.width / 2) - (popupWidth / 2);
+    const y = logoRect.top - panelRect.top - popupHeight - gap;
+
+    // Clamp to panel boundaries (account for panel padding)
+    const panelPadding = 16; // 4 * 4px (p-4 class)
+    const clampedX = Math.max(panelPadding, Math.min(x, panel.clientWidth - popupWidth - panelPadding));
 
     setPopupPosition({ 
-      x: Math.max(8, Math.min(x, container.clientWidth - popupWidth - 8)),
+      x: clampedX,
       y,
-      popupWidth
+      popupWidth,
+      popupHeight
     });
     
     setSelectedUserLogo(logo);
@@ -170,6 +175,7 @@ const handleLogoClick = (logo, event) => {
     setSelectedLogo(logo.url);
   }
 };
+
 
 
 
@@ -405,43 +411,47 @@ const checkAuth = async (requireAuth = true) => {
   }, [showLogoPopup]);
 
 
-  useEffect(() => {
-  const container = logoContainerRef.current;
+useEffect(() => {
+  const scrollContainer = logoContainerRef.current; // This stays as the scrollable container
+  const panel = logoSelectionRef.current; // This is for positioning calculations
   
   const handleScroll = () => {
-    if (showLogoPopup && selectedUserLogo) {
-      // Recalculate position on scroll
-      const logos = Array.from(container.getElementsByClassName('logo-item'));
+    if (showLogoPopup && selectedUserLogo && panel) {
+      const logos = Array.from(scrollContainer.getElementsByClassName('logo-item'));
       const targetLogo = logos.find(logo => 
         logo.querySelector('img')?.src === selectedUserLogo.url
       );
       
       if (targetLogo) {
         const logoRect = targetLogo.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
+        const panelRect = panel.getBoundingClientRect();
         
-        const x = logoRect.left - containerRect.left + (logoRect.width / 2) - (popupPosition.popupWidth / 2);
-        const y = logoRect.top - containerRect.top - popupPosition.popupHeight - 10;
+        const x = logoRect.left - panelRect.left + (logoRect.width / 2) - (popupPosition.popupWidth / 2);
+        const y = logoRect.top - panelRect.top - (popupPosition.popupHeight || 80) - 10;
+        
+        const panelPadding = 16;
+        const clampedX = Math.max(panelPadding, Math.min(x, panel.clientWidth - popupPosition.popupWidth - panelPadding));
         
         setPopupPosition(prev => ({
           ...prev,
-          x: Math.max(8, Math.min(x, container.clientWidth - prev.popupWidth - 8)),
+          x: clampedX,
           y
         }));
       }
     }
   };
 
-  if (container) {
-    container.addEventListener('scroll', handleScroll);
+  if (scrollContainer) {
+    scrollContainer.addEventListener('scroll', handleScroll);
   }
 
   return () => {
-    if (container) {
-      container.removeEventListener('scroll', handleScroll);
+    if (scrollContainer) {
+      scrollContainer.removeEventListener('scroll', handleScroll);
     }
   };
 }, [showLogoPopup, selectedUserLogo, popupPosition.popupWidth, popupPosition.popupHeight]);
+
 
 
 
@@ -523,11 +533,10 @@ const checkAuth = async (requireAuth = true) => {
                 onChange={() => setWithLogo(!withLogo)}/>Add logo to QR Code
             </label><br></br>
             {withLogo && (
-                  <div className="logo-selection-panel mt-4 p-4 border rounded-lg relative">
+                  <div className="logo-selection-panel mt-4 p-4 border rounded-lg relative" ref={logoContainerRef}>
                       <h3 className="text-md font-semibold mb-2">Select Logo:</h3>
       
-                      <div className="logo-grid grid grid-cols-5 gap-4 mb-4 max-h-40 overflow-y-auto"
-                      ref={logoContainerRef}>
+                      <div className="logo-grid grid grid-cols-5 gap-4 mb-4 max-h-40 overflow-y-auto">
                         {allLogos.map((logo, index) => (
                           <div 
                             key={index}
