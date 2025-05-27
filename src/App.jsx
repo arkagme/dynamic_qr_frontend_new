@@ -147,24 +147,20 @@ const QRGenerator = () =>  {
 
 const handleLogoClick = (logo, event) => {
   if (logo.isUserUploaded) {
-    const panel = logoSelectionRef.current;
     const logoRect = event.target.getBoundingClientRect();
-    const panelRect = panel.getBoundingClientRect();
+    const container = logoContainerRef.current;
+    const containerRect = container.getBoundingClientRect();
     
     const popupWidth = 160;
     const popupHeight = 80;
     const gap = 10;
 
-    // Calculate position relative to the panel (not the grid)
-    const x = logoRect.left - panelRect.left + (logoRect.width / 2) - (popupWidth / 2);
-    const y = logoRect.top - panelRect.top - popupHeight - gap;
-
-    // Clamp to panel boundaries (account for panel padding)
-    const panelPadding = 16; // 4 * 4px (p-4 class)
-    const clampedX = Math.max(panelPadding, Math.min(x, panel.clientWidth - popupWidth - panelPadding));
+    // Simple calculation: center popup above logo
+    const x = logoRect.left - containerRect.left + (logoRect.width / 2) - (popupWidth / 2);
+    const y = logoRect.top - containerRect.top - popupHeight - gap;
 
     setPopupPosition({ 
-      x: clampedX,
+      x: Math.max(0, Math.min(x, container.clientWidth - popupWidth)),
       y,
       popupWidth,
       popupHeight
@@ -176,6 +172,7 @@ const handleLogoClick = (logo, event) => {
     setSelectedLogo(logo.url);
   }
 };
+
 
 
 
@@ -413,45 +410,26 @@ const checkAuth = async (requireAuth = true) => {
 
 
 useEffect(() => {
-  const scrollContainer = logoContainerRef.current; // This stays as the scrollable container
-  const panel = logoSelectionRef.current; // This is for positioning calculations
+  const container = logoContainerRef.current;
   
   const handleScroll = () => {
-    if (showLogoPopup && selectedUserLogo && panel) {
-      const logos = Array.from(scrollContainer.getElementsByClassName('logo-item'));
-      const targetLogo = logos.find(logo => 
-        logo.querySelector('img')?.src === selectedUserLogo.url
-      );
-      
-      if (targetLogo) {
-        const logoRect = targetLogo.getBoundingClientRect();
-        const panelRect = panel.getBoundingClientRect();
-        
-        const x = logoRect.left - panelRect.left + (logoRect.width / 2) - (popupPosition.popupWidth / 2);
-        const y = logoRect.top - panelRect.top - (popupPosition.popupHeight || 80) - 10;
-        
-        const panelPadding = 16;
-        const clampedX = Math.max(panelPadding, Math.min(x, panel.clientWidth - popupPosition.popupWidth - panelPadding));
-        
-        setPopupPosition(prev => ({
-          ...prev,
-          x: clampedX,
-          y
-        }));
-      }
+    if (showLogoPopup) {
+      setShowLogoPopup(false); // Simply close popup on scroll
+      setSelectedUserLogo(null);
     }
   };
 
-  if (scrollContainer) {
-    scrollContainer.addEventListener('scroll', handleScroll);
+  if (container) {
+    container.addEventListener('scroll', handleScroll);
   }
 
   return () => {
-    if (scrollContainer) {
-      scrollContainer.removeEventListener('scroll', handleScroll);
+    if (container) {
+      container.removeEventListener('scroll', handleScroll);
     }
   };
-}, [showLogoPopup, selectedUserLogo, popupPosition.popupWidth, popupPosition.popupHeight]);
+}, [showLogoPopup]);
+
 
 
 
@@ -598,24 +576,23 @@ useEffect(() => {
                     <button onClick={handleAcceptLogo} className="btn btn-sm btn-primary w-full text-xs py-1">Accept</button>
                     <button onClick={handleDeleteLogo} className="btn btn-sm btn-error w-full text-xs py-1">Delete</button>
                   </div>
-                  {/* Arrow at the bottom center */}
+                  {/* Arrow pointing down to logo */}
                   <div
-                    className="logo-popup-arrow"
                     style={{
                       position: 'absolute',
                       left: '50%',
-                      bottom: '-10px',
+                      bottom: '-8px',
                       transform: 'translateX(-50%)',
                       width: 0,
                       height: 0,
-                      borderLeft: '10px solid transparent',
-                      borderRight: '10px solid transparent',
-                      borderTop: '10px solid #fff', // match popup background
-                      filter: 'drop-shadow(0 1px 2px #d1d5db)', // subtle shadow
+                      borderLeft: '8px solid transparent',
+                      borderRight: '8px solid transparent',
+                      borderTop: '8px solid white',
                     }}
                   />
                 </div>
               )}
+
 
               </div>
               )}
