@@ -41,6 +41,9 @@ const QRGenerator = () =>  {
   const [isUploading, setIsUploading] = useState(false);
   const [authStatus, setAuthStatus] = useState(null);
   const [authChecking, setAuthChecking] = useState(false);
+  const [showLogoPopup, setShowLogoPopup] = useState(false);
+  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
+  const [selectedUserLogo, setSelectedUserLogo] = useState(null);
   const allLogos = [...predefinedLogos, ...userLogos];
 
 
@@ -84,6 +87,208 @@ const QRGenerator = () =>  {
       return () => clearTimeout(timer);
     }
   }, [qrData]);
+
+    // Fetch user logos when component mounts or when withLogo changes
+  useEffect(() => {
+    if (withLogo && authStatus) {
+      fetchUserLogos();
+    }
+  }, [withLogo, authStatus]);
+
+  const fetchUserLogos = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/userlogos`, {
+        withCredentials: true
+      });
+      
+      if (response.data.success) {
+        const formattedLogos = response.data.logos.map((logo, index) => ({
+          name: `My Logo ${index + 1}`,
+          url: logo.url,
+          share_id: logo.share_id,
+          isUserUploaded: true
+        }));
+        setUserLogos(formattedLogos);
+      }
+    } catch (error) {
+      console.error('Error fetching user logos:', error);
+    }
+  };
+
+
+import './App.css'
+import React, { useState, useRef , useEffect } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
+import { Link , useNavigate} from 'react-router-dom';
+import axios from 'axios';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+const predefinedLogos = [
+  {
+    name: 'Google (Transparent)',
+    url: 'https://logo.arkagme.biz/api/shares/logo-1748280593119-urax1yn9/files/22675f81-6959-41ad-bd13-1c74aa31b9ce?display=true'
+  },
+  {
+    name: 'Instagram',
+    url: 'https://logo.arkagme.biz/api/shares/logo-1748281069815-cjcucz5x/files/91d2d57e-8098-4766-bcba-c4a44af5c68a?display=true'
+  },
+  {
+    name: 'X (Twitter)',
+    url: 'https://logo.arkagme.biz/api/shares/logo-1748281316345-f7s469iu/files/a88604c0-cb67-4457-a65e-abc1fe7bbcd5?display=true'
+  },
+  {
+    name: 'Facebook',
+    url: 'https://logo.arkagmes.biz/api/shares/logo-1748281584570-jnykwep8/files/ecd8e16e-b6ad-4a16-8ee7-96881e49bc67?display=true'
+  }
+];
+
+const QRGenerator = () =>  {
+  const [url, setUrl] = useState('');
+  const [isDynamic, setIsDynamic] = useState(false);
+  const [withLogo, setWithLogo] = useState(false);
+  const [qrData, setQrData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [imagePath, setImagePath] = useState('');
+  const qrRef = useRef();
+  const [qrRendered, setQrRendered] = useState(false);
+  const [displayQrValue, setDisplayQrValue] = useState('https://example.com');
+  const [isGenerated, setIsGenerated] = useState(false);
+  const navigate = useNavigate();
+  const [userLogos, setUserLogos] = useState([]);
+  const [selectedLogo, setSelectedLogo] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+  const [authStatus, setAuthStatus] = useState(null);
+  const [authChecking, setAuthChecking] = useState(false);
+  const [showLogoPopup, setShowLogoPopup] = useState(false);
+  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
+  const [selectedUserLogo, setSelectedUserLogo] = useState(null);
+  const allLogos = [...predefinedLogos, ...userLogos];
+
+  const handleLogin = () => {
+  window.location.href = `${API_BASE_URL}/login/federated/google`;
+    };
+
+  const handleLogout = async () => {
+  await axios.post(`${API_BASE_URL}/logout`, {}, { withCredentials: true });
+  window.location.href = '/';
+    };
+
+  useEffect(() => {
+    if (!isGenerated) {
+      if (url.trim()) {
+        setDisplayQrValue(url);
+      } else {
+        setDisplayQrValue('https://example.com'); // Default placeholder when empty
+      }
+    }
+  }, [url, isGenerated]);
+
+  useEffect(() => {
+    const saveQRAfterRender = async () => {
+      if (qrData && qrData.isDynamic && qrRef.current) {
+        try {
+          await saveQRCode(qrData.trackingId || 'qrcode');
+        } catch (error) {
+          console.error('Error saving QR code after render:', error);
+        }
+      }
+    };
+
+    if (qrData) {
+      // delay to ensure the QR is fully rendered
+      const timer = setTimeout(() => {
+        setQrRendered(true);
+        saveQRAfterRender();
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [qrData]);
+
+  // Fetch user logos when component mounts or when withLogo changes
+  useEffect(() => {
+    if (withLogo && authStatus) {
+      fetchUserLogos();
+    }
+  }, [withLogo, authStatus]);
+
+  const fetchUserLogos = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/userlogos`, {
+        withCredentials: true
+      });
+      
+      if (response.data.success) {
+        const formattedLogos = response.data.logos.map((logo, index) => ({
+          name: `My Logo ${index + 1}`,
+          url: logo.url,
+          share_id: logo.share_id,
+          isUserUploaded: true
+        }));
+        setUserLogos(formattedLogos);
+      }
+    } catch (error) {
+      console.error('Error fetching user logos:', error);
+    }
+  };
+
+  const deleteUserLogo = async (shareId) => {
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/userlogos/${shareId}`, {
+        withCredentials: true
+      });
+      
+      if (response.status === 200) {
+        // Remove the deleted logo from state
+        setUserLogos(prev => prev.filter(logo => logo.share_id !== shareId));
+        
+        // If the deleted logo was selected, clear the selection
+        if (selectedLogo === selectedUserLogo?.url) {
+          setSelectedLogo('');
+        }
+        
+        setShowLogoPopup(false);
+        setSelectedUserLogo(null);
+        alert('Logo deleted successfully!');
+      }
+    } catch (error) {
+      console.error('Error deleting logo:', error);
+      alert('Failed to delete logo');
+    }
+  };
+
+    const handleLogoClick = (logo, event) => {
+    // Check if this is a user-uploaded logo
+    const isUserLogo = logo.isUserUploaded;
+    
+    if (isUserLogo) {
+      // Show popup for user-uploaded logos
+      const rect = event.target.getBoundingClientRect();
+      setPopupPosition({
+        x: rect.left + rect.width / 2,
+        y: rect.top - 10
+      });
+      setSelectedUserLogo(logo);
+      setShowLogoPopup(true);
+    } else {
+      // Directly apply predefined logos
+      setSelectedLogo(logo.url);
+    }
+  };
+
+  const handleAcceptLogo = () => {
+    if (selectedUserLogo) {
+      setSelectedLogo(selectedUserLogo.url);
+    }
+    setShowLogoPopup(false);
+    setSelectedUserLogo(null);
+  };
+
+  const handleDeleteLogo = () => {
+    if (selectedUserLogo && selectedUserLogo.share_id) {
+      deleteUserLogo(selectedUserLogo.share_id);
+    }
+  };
 
   const checkAuth = async (requireAuth = true) => {
     if (!authChecking && authStatus !== null) {
@@ -281,14 +486,8 @@ const QRGenerator = () =>  {
       );
 
       if (response.data.success) {
-      const newLogo = {
-        name: `My Logo ${userLogos.length + 1}`,
-        url: response.data.details.directFileUrl  // ✅ Correct path
-      };
-
-      setUserLogos(prev => [...prev, newLogo]);
-      setSelectedLogo(response.data.details.directFileUrl);  // ✅ Correct path
-      alert('Logo uploaded successfully!');
+        await fetchUserLogos();
+        alert('Logo uploaded successfully!');
     }
     } catch (error) {
       console.error('Upload failed:', error);
@@ -297,6 +496,20 @@ const QRGenerator = () =>  {
       setIsUploading(false);
     }
   };
+
+ useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showLogoPopup && !event.target.closest('.logo-popup')) {
+        setShowLogoPopup(false);
+        setSelectedUserLogo(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showLogoPopup]);
 
 
 
@@ -377,18 +590,18 @@ const QRGenerator = () =>  {
                 checked={withLogo} 
                 onChange={() => setWithLogo(!withLogo)}/>Add logo to QR Code
             </label><br></br>
-              {withLogo && (
-                  <div className="logo-selection-panel mt-4 p-4 border rounded-lg">
+            {withLogo && (
+                  <div className="logo-selection-panel mt-4 p-4 border rounded-lg relative">
                       <h3 className="text-md font-semibold mb-2">Select Logo:</h3>
       
                       <div className="logo-grid grid grid-cols-5 gap-4 mb-4 max-h-40 overflow-y-auto">
                         {allLogos.map((logo, index) => (
                           <div 
                             key={index}
-                            className={`logo-item p-1 border-2 cursor-pointer ${
+                            className={`logo-item p-1 border-2 cursor-pointer relative ${
                             selectedLogo === logo.url ? 'border-primary' : 'border-transparent'
                         }`}
-                        onClick={() => setSelectedLogo(logo.url)}
+                        onClick={(event) => handleLogoClick(logo, event)}
                     >
                       <img 
                         src={logo.url} 
@@ -396,6 +609,10 @@ const QRGenerator = () =>  {
                         className="w-full h-12 object-contain"
                         crossOrigin="anonymous"
                       />
+                      {/* User logo indicator */}
+                      {logo.isUserUploaded && (
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full"></div>
+                      )}
                     </div>
                   ))}
                   </div>
@@ -421,6 +638,37 @@ const QRGenerator = () =>  {
                 >
                 {isUploading ? 'Uploading...' : 'Upload Own Logo (PNG <5MB)'}
               </button>
+
+              {/* Logo Popup */}
+              {showLogoPopup && selectedUserLogo && (
+                <div 
+                  className="logo-popup fixed z-50 bg-white border border-gray-300 rounded-lg shadow-lg p-3 min-w-[120px]"
+                  style={{
+                    left: `${popupPosition.x - 60}px`,
+                    top: `${popupPosition.y - 80}px`,
+                    transform: 'translateX(-50%)'
+                  }}
+                >
+                  <div className="flex flex-col gap-2">
+                    <button
+                      onClick={handleAcceptLogo}
+                      className="btn btn-sm btn-primary w-full text-xs py-1"
+                    >
+                      Accept
+                    </button>
+                    <button
+                      onClick={handleDeleteLogo}
+                      className="btn btn-sm btn-error w-full text-xs py-1"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  {/* Popup arrow */}
+                  <div 
+                    className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-300"
+                  ></div>
+                </div>
+              )}
               </div>
               )}
             <button  
@@ -467,6 +715,7 @@ const QRGenerator = () =>  {
     </div>
     </>
   )
+}
 }
 
 export default QRGenerator
