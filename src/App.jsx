@@ -89,10 +89,10 @@ const QRGenerator = () =>  {
 
   // Fetch user logos when component mounts or when withLogo changes
   useEffect(() => {
-    if (withLogo && authStatus) {
+    if (authStatus) {
       fetchUserLogos();
     }
-  }, [withLogo, authStatus]);
+  }, [authStatus]);
 
   const fetchUserLogos = async () => {
     try {
@@ -148,7 +148,7 @@ const QRGenerator = () =>  {
       const rect = event.target.getBoundingClientRect();
       setPopupPosition({
         x: rect.left + rect.width / 2,
-        y: rect.top - 90
+        y: rect.top - 10
       });
       setSelectedUserLogo(logo);
       setShowLogoPopup(true);
