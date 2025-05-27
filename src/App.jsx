@@ -534,7 +534,7 @@ useEffect(() => {
             </label><br></br>
             {withLogo && (
                   <div className="logo-selection-panel mt-4 p-4 border rounded-lg relative" ref={logoSelectionRef}>
-                      <h3 className="text-md font-semibold mb-2">Select Logo:</h3>
+                
       
                       <div className="logo-grid grid grid-cols-5 gap-4 mb-4 max-h-40 overflow-y-auto" ref={logoContainerRef}>
                         {allLogos.map((logo, index) => (
@@ -575,7 +575,8 @@ useEffect(() => {
                     document.getElementById('logo-upload').click();
                   }
               }}
-                className="btn btn-outline btn-sm w-full"
+        
+                className="btn btn-outline btn-primary btn-md w-full"
                 disabled={isUploading}
                 >
                 {isUploading ? 'Uploading...' : 'Upload Own Logo (PNG <5MB)'}
