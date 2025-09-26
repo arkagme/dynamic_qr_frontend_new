@@ -8,19 +8,19 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const predefinedLogos = [
   {
     name: 'Google (Transparent)',
-    url: 'https://logo.arkagme.biz/api/shares/logo-1748280593119-urax1yn9/files/22675f81-6959-41ad-bd13-1c74aa31b9ce?display=true'
+    url: 'https://logo.arkagme.me/api/shares/logo-1748280593119-urax1yn9/files/22675f81-6959-41ad-bd13-1c74aa31b9ce?display=true'
   },
   {
     name: 'Instagram',
-    url: 'https://logo.arkagme.biz/api/shares/logo-1748281069815-cjcucz5x/files/91d2d57e-8098-4766-bcba-c4a44af5c68a?display=true'
+    url: 'https://logo.arkagme.me/api/shares/logo-1748281069815-cjcucz5x/files/91d2d57e-8098-4766-bcba-c4a44af5c68a?display=true'
   },
   {
     name: 'X (Twitter)',
-    url: 'https://logo.arkagme.biz/api/shares/logo-1748281316345-f7s469iu/files/a88604c0-cb67-4457-a65e-abc1fe7bbcd5?display=true'
+    url: 'https://logo.arkagme.me/api/shares/logo-1748281316345-f7s469iu/files/a88604c0-cb67-4457-a65e-abc1fe7bbcd5?display=true'
   },
   {
     name: 'Facebook',
-    url: 'https://logo.arkagme.biz/api/shares/logo-1748281584570-jnykwep8/files/ecd8e16e-b6ad-4a16-8ee7-96881e49bc67?display=true'
+    url: 'https://logo.arkagme.me/api/shares/logo-1748281584570-jnykwep8/files/ecd8e16e-b6ad-4a16-8ee7-96881e49bc67?display=true'
   }
 ];
 
