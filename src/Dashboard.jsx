@@ -44,7 +44,7 @@ const Dashboard = () => {
     <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mt-4 text-center max-w-md mx-auto">
       {error}
       <Link
-        to="/error"
+        to="/"
         className="mt-3 inline-block bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
       >
         Back to Generator
@@ -164,7 +164,7 @@ const Dashboard = () => {
                                         <div className="stat-title">Total Scans</div>
                                     </div>
                                     <div className="stat bg-base-200 rounded-lg" style={{backgroundColor : "#1B2362"}}>
-                                        <div className="stat-value text-success">{analytics.stats.get_qr_analytics.unique_visitors}</div>
+                                        <div className="stat-value text-success">{analytics.stats.get_qr_analytics.unique_ips}</div>
                                         <div className="stat-title">Unique Visitors</div>
                                     </div>
                                     <div className="stat bg-base-200 rounded-lg" style={{backgroundColor : "#1B2362"}}>
