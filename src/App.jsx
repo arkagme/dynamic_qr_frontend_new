@@ -8,7 +8,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const predefinedLogos = [
   {
     name: 'Google (Transparent)',
-    url: 'https://logo.arkagme.me/api/shares/logo-1748280593119-urax1yn9/files/22675f81-6959-41ad-bd13-1c74aa31b9ce?display=true'
+    url: 'https://logo.arkagme.me/api/shares/logo-1761399479666-5qnt4fdn/files/0e56f022-e728-4fdf-ac85-5728c4974a70?display=true'
   },
   {
     name: 'Instagram',
