@@ -12,15 +12,15 @@ const predefinedLogos = [
   },
   {
     name: 'Instagram',
-    url: 'https://logo.arkagme.me/api/shares/logo-1748281069815-cjcucz5x/files/91d2d57e-8098-4766-bcba-c4a44af5c68a?display=true'
+    url: 'https://logo.arkagme.me/api/shares/logo-1761399726815-0xarfb0o/files/03b4fc41-061b-4786-987e-8f2833948296?display=true'
   },
   {
     name: 'X (Twitter)',
-    url: 'https://logo.arkagme.me/api/shares/logo-1748281316345-f7s469iu/files/a88604c0-cb67-4457-a65e-abc1fe7bbcd5?display=true'
+    url: 'https://logo.arkagme.me/api/shares/logo-1761399754092-zjp7e07y/files/9f7ce36a-dd70-4551-af24-2ef26655df2b?display=true'
   },
   {
     name: 'Facebook',
-    url: 'https://logo.arkagme.me/api/shares/logo-1748281584570-jnykwep8/files/ecd8e16e-b6ad-4a16-8ee7-96881e49bc67?display=true'
+    url: 'https://logo.arkagme.me/api/shares/logo-1761399699300-wnvvdo8z/files/83497b41-9eee-4239-a7e6-bb1f2f047b4d?display=true'
   }
 ];
 
